@@ -36,7 +36,9 @@ function ArrivedItem({ item }) {
 			</div>
 			<h5 className='text-lg font-semibold mt-4'>{item.name}</h5>
 			<span className=''>{numberFormat(item.price)}</span>
-			<a href='/details' className='stretched-link' />
+			<a href='/details' className='stretched-link'>
+				&nbsp;
+			</a>
 		</div>
 	);
 }
