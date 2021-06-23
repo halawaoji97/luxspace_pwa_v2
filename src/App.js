@@ -1,26 +1,43 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import React, { useState, useEffect } from 'react';
+import Header from './components/Header';
+import Hero from './components/Hero';
+import Browse from './components/Browse';
+import Arrived from './components/Arrived';
+import Aside from './components/Aside';
+import Clients from './components/Clients';
+import Footer from './components/Footer';
 
 function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+	const [items, setItems] = useState([]);
+
+	useEffect(function () {
+		(async function () {
+			const response = await fetch(
+				'https://prod-qore-app.qorebase.io/8ySrll0jkMkSJVk/allItems/rows?limit=7&offset=0&$order=asc',
+				{
+					headers: {
+						'Content-Type': 'application/json',
+						accept: 'application/json',
+						'X-Api-Key': process.env.REACT_APP_APIKEY,
+					},
+				},
+			);
+			const { nodes } = await response.json();
+			setItems(nodes);
+		})();
+	}, []);
+
+	return (
+		<>
+			<Header />
+			<Hero />
+			<Browse />
+			<Arrived items={items} />
+			<Clients />
+			<Aside />
+			<Footer />
+		</>
+	);
 }
 
 export default App;
