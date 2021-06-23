@@ -24,6 +24,7 @@ function App() {
 			);
 			const { nodes } = await response.json();
 			setItems(nodes);
+			console.log(nodes);
 		})();
 	}, []);
 
