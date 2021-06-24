@@ -6,30 +6,54 @@ import Arrived from './components/Arrived';
 import Aside from './components/Aside';
 import Clients from './components/Clients';
 import Footer from './components/Footer';
+import Offline from './components/Offline';
 
 function App() {
 	const [items, setItems] = useState([]);
+	const [offlineStatus, setOfflineStatus] = useState(!navigator.onLine);
 
-	useEffect(function () {
-		(async function () {
-			const response = await fetch(
-				'https://prod-qore-app.qorebase.io/8ySrll0jkMkSJVk/allItems/rows?limit=7&offset=0&$order=asc',
-				{
-					headers: {
-						'Content-Type': 'application/json',
-						accept: 'application/json',
-						'X-Api-Key': process.env.REACT_APP_APIKEY,
+	function handleOfflineStatus() {
+		setOfflineStatus(!navigator.onLine);
+	}
+
+	useEffect(
+		function () {
+			(async function () {
+				const response = await fetch(
+					'https://prod-qore-app.qorebase.io/8ySrll0jkMkSJVk/allItems/rows?limit=7&offset=0&$order=asc',
+					{
+						headers: {
+							'Content-Type': 'application/json',
+							accept: 'application/json',
+							'X-Api-Key': process.env.REACT_APP_APIKEY,
+						},
 					},
-				},
-			);
-			const { nodes } = await response.json();
-			setItems(nodes);
-			console.log(nodes);
-		})();
-	}, []);
+				);
+				const { nodes } = await response.json();
+				setItems(nodes);
+				console.log(nodes);
+
+				const script = document.createElement('script');
+				script.src = '/carousel.js';
+				script.async = false;
+				document.body.appendChild(script);
+			})();
+
+			handleOfflineStatus();
+			window.addEventListener('online', handleOfflineStatus);
+			window.addEventListener('offline', handleOfflineStatus);
+
+			return function () {
+				window.removeEventListener('online', handleOfflineStatus);
+				window.removeEventListener('offline', handleOfflineStatus);
+			};
+		},
+		[offlineStatus],
+	);
 
 	return (
 		<>
+			{offlineStatus && <Offline />}
 			<Header />
 			<Hero />
 			<Browse />
